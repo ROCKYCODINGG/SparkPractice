@@ -1,2 +1,4 @@
 rootProject.name = 'SparkPracticeOnFunction'
+include 'spark-utils'
+include 'spark-main'
 

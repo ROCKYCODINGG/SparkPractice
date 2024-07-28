@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ScalaCompilerConfiguration">
+    <profile name="Gradle 1" modules="SparkPracticeOnFunction.main,SparkPracticeOnFunction.spark-main.main,SparkPracticeOnFunction.spark-main.test,SparkPracticeOnFunction.spark-utils.main,SparkPracticeOnFunction.spark-utils.test,SparkPracticeOnFunction.test">
+      <option name="deprecationWarnings" value="true" />
+      <option name="uncheckedWarnings" value="true" />
+    </profile>
+  </component>
+</project>

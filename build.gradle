@@ -1,28 +1,78 @@
-plugins {
-    id 'scala'
+allprojects {
+    repositories {
+        mavenCentral()
+    }
+    configurations {
+        extraLibs
+    }
 }
 
-group = 'org.example'
-version = '1.0-SNAPSHOT'
+subprojects {
+    apply plugin: 'scala'
+    group 'spark-practice'
+    version '0.0'
 
-repositories {
-    mavenCentral()
+    dependencies {
+        implementation 'org.apache.spark:spark-core_2.12:3.5.0'
+        compileOnly 'org.apache.spark:spark-sql_2.12:3.5.0'
+        implementation 'org.scala-lang:scala-library:2.12.19'
+
+        testImplementation platform('org.junit:junit-bom:5.9.1')
+        testImplementation 'org.junit.jupiter:junit-jupiter'
+        testImplementation 'org.apache.spark:spark-core_2.12:3.5.0'
+        testImplementation 'org.apache.spark:spark-sql_2.12:3.5.0'
+        testImplementation 'org.scala-lang:scala-library:2.12.19'
+
+    }
+
+    sourceSets {
+        main{
+            scala {
+                ['src/main/scala']
+            }
+            resources {
+                ['src/main/resources']
+            }
+        }
+        test{
+            scala{
+                ['src/test/scala']
+            }
+            resources {
+                ['src/test/resources']
+            }
+        }
+    }
 }
 
-dependencies {
-    implementation 'org.apache.spark:spark-core_2.12:3.5.0'
-    compileOnly 'org.apache.spark:spark-sql_2.12:3.5.0'
-    implementation 'org.scala-lang:scala-library:2.12.19'
-
-
-    testImplementation platform('org.junit:junit-bom:5.9.1')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
-    testImplementation 'org.apache.spark:spark-core_2.12:3.5.0'
-    testImplementation 'org.apache.spark:spark-sql_2.12:3.5.0'
-    testImplementation 'org.scala-lang:scala-library:2.12.19'
-
+project(':spark-utils'){
+    dependencies {
+        extraLibs 'com.typesafe:config:1.3.0'
+//        configurations.runtimeClassPath.extendsFrom(configurations.extraLibs)
+    }
+    compileScala{
+        options.forkOptions.jvmArgs += '-Xss1G'
+    }
+    test{
+        jvmArgs = ['-Xss1G']
+    }
+    jar{
+        duplicatesStrategy DuplicatesStrategy.EXCLUDE
+        from {
+            configurations.extraLibs.collect {it.isDirectory()?it:zipTree(it)}
+        }
+    }
 }
 
-test {
-    useJUnitPlatform()
+project(':spark-main'){
+    dependencies {
+        implementation project(':spark-utils')
+    }
+    jar{
+        duplicatesStrategy DuplicatesStrategy.EXCLUDE
+        from {
+            configurations.extraLibs.collect {it.isDirectory()?it:zipTree(it)}
+        }
+    }
+//    zip64=True
 }
